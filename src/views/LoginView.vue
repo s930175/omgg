@@ -1,51 +1,56 @@
 <template>
   <div class="body">
     <div class="login">
-      <form
-        action=""
-        class="form"
-        name="myForm"
-        method="post"
-        @submit.prevent="login"
-      >
+      <form class="form" name="myForm" method="post" target="hidefrime">
         <h2>會員登入</h2>
         <div class="group">
-          <label for="user-id">帳號</label>
+          <label for="account">帳號</label>
           <input
             type="text"
-            name="email"
+            name="account"
             id="user-id"
             placeholder="email"
-            v-model="userName"
+            v-model="account"
           />
         </div>
         <div class="group">
-          <label for="user-password">密碼</label>
+          <label for="password">密碼</label>
           <input
             :type="eye ? 'text' : 'password'"
-            name="user-password"
+            name="password"
             id="user-password"
             placeholder="6~12英數字"
-            v-model="userPassword"
+            v-model="password"
           />
           <i id="eyes" class="fa-solid fa-eye" @click="toggle_eye(eye)"></i>
         </div>
         <div class="btn-group">
-          <button class="btn">登入</button>
+          <input
+            class="btn"
+            name="button"
+            type="submit"
+            value="登入"
+            @click="login"
+          />
           <button class="btn" @click="logout">取消</button>
         </div>
       </form>
+      <!-- 阻止跳頁 -->
+      <iframe name="hidefrime" class="d-none"></iframe>
     </div>
   </div>
 </template>
 
 <script>
+// import axios from 'axios'
+// axios.defaults.baseURL = 'http://localhost:8080'
 export default {
   data() {
     return {
       eye: false,
-      userName: "",
-      userPassword: "",
+      account: "",
+      password: "",
+      success: false,
     };
   },
   methods: {
@@ -64,33 +69,33 @@ export default {
       //localStorage.removeItem("token");
       this.$router.push("/product");
     },
-    login() {
-      //驗證帳號
-      let valUserName = this.userName;
-      let atpos = valUserName.indexOf("@");
-      let dotpos = valUserName.lastIndexOf(".");
-      //驗證密碼
-      let valUserPassword = this.userPassword;
-      let reg = /\d[a-zA-Z]{1}/;
-      let newPpassword = reg.test(valUserPassword);
-      //輸入的數據必須包含@ 符號和點號(.)。 同時，@ 不可以是郵件地址的首字符，並且@ 之後需有至少一個點號
-      if (atpos < 1 || dotpos < atpos + 2 || dotpos + 2 >= valUserName.length) {
-        alert("請輸入有效email");
-      } else if (valUserPassword.length < 6) {
-        confirm("長度太短");
-      } else if (valUserPassword.length > 12) {
-        confirm("長度太長");
-      } else if (newPpassword == false) {
-        alert("密碼格式不符(需6~12英數字混合)");
-      } else {
-        // localStorage.setItem("token", "ImLogin");
-        alert(`Hi~${valUserName}`)
+    async login() {
+      // php用axios找資料一定愛配FormData()
+      let data = new FormData();
+      // data.append('要POST出去的東西', 輸入值)
+      data.append("account", this.account);
+      data.append("password", this.password);
+      let { data: result } = await this.$axios.post(
+        "http://localhost/connect_doll/doLogin.php",
+        data
+      );
+      console.log(result);
+      if (result) {
+        // this.success == true;
+        localStorage.setItem("user", JSON.stringify(result));
+        console.log(result);
+        // this.$emit('loginSuccess')
         this.$router.push("/");
+        // console.log(this.success);
+      } else {
+        // this.success == false;
+        alert("帳號或密碼錯誤");
       }
-
     },
   },
+  created() {},
 };
+// TODO:登出畫面 登入畫面修改
 </script>
 
 <style scoped>
@@ -157,7 +162,9 @@ export default {
   border: none;
   background-color: rgb(153, 153, 220);
   width: 190px;
+  height: 50px;
   padding: 10px 0;
+  line-height: 28px;
 }
 
 .form .btn + .btn {

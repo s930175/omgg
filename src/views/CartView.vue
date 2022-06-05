@@ -44,7 +44,6 @@
 <script>
 import Describe from "../components/DescribeView.vue";
 import PayView from "@/components/PayView.vue";
-import { $dataMetaSchema } from "ajv";
 export default {
   components: {
     Describe,

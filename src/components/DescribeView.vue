@@ -20,13 +20,13 @@
 export default {
   data() {
     return {
-      count: 0,
+      count: 1,
       cartList:[],
     };
   },
   methods: {
     reductCount() {
-      if (this.count > 0) {
+      if (this.count > 1) {
         this.count--;
         this.$emit("choosen", { id: this.id, count: this.count, name:this.name,price:this.price });
         this.$emit("cart", { id: this.id, count: this.count, name:this.name,price:this.price, select:this.select });
