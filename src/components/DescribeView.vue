@@ -21,26 +21,53 @@ export default {
   data() {
     return {
       count: 0,
-      cartList:[],
+      cartList: [],
     };
   },
   methods: {
     reductCount() {
       if (this.count > 1) {
         this.count--;
-        this.$emit("choosen", { id: this.id, count: this.count, name:this.name,price:this.price });
-        this.$emit("cart", { id: this.id, count: this.count, name:this.name,price:this.price, select:this.select });
+        this.$emit("choosen", {
+          id: this.id,
+          count: this.count,
+          name: this.name,
+          price: this.price,
+        });
+        this.$emit("cart", {
+          id: this.id,
+          count: this.count,
+          name: this.name,
+          price: this.price,
+          select: this.select,
+        });
       }
     },
     addCount() {
       if (this.count < 9) {
         this.count++;
-        this.$emit("choosen", { id: this.id, count: this.count,name:this.name,price:this.price });
-        this.$emit("cart", { id: this.id, count: this.count, name:this.name,price:this.price, select:this.select });
+        this.$emit("choosen", {
+          id: this.id,
+          count: this.count,
+          name: this.name,
+          price: this.price,
+        });
+        this.$emit("cart", {
+          id: this.id,
+          count: this.count,
+          name: this.name,
+          price: this.price,
+          select: this.select,
+        });
       }
     },
     addCart() {
-      alert(`成功加入購物車，數量:${this.count}`);
+      if (this.count == 0) {
+        return false;
+      } else {
+        alert(`成功加入購物車，數量:${this.count}`);
+      }
+
       // this.cartList=this.cartList.push(this.cartList)
       // this.cartList =JSON.stringify([{ id: this.id, count: this.count,name:this.name,price:this.price }])
       // localStorage.setItem("ProductCount", this.cartList);
@@ -67,14 +94,14 @@ img {
   vertical-align: middle;
   padding: 10px 5px;
 }
-.btn-count{
+.btn-count {
   font-size: 16px;
   border: none;
   border-radius: 50%;
   margin: 10px;
   background-color: #eee;
 }
-.btn-add{
+.btn-add {
   margin: 5px;
   padding: 5px;
   border: 1px solid #aaa;

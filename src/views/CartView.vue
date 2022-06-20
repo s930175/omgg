@@ -8,17 +8,21 @@
   />
   <div>
     <h1>你的訂單</h1>
-    <form action="http://localhost/connect_doll/doCart.php" method="post" target="hidefrime">
+    <form
+      action="http://localhost/connect_doll/doCart.php"
+      method="post"
+      target="hidefrime"
+    >
       <ul class="order">
         <li v-for="shop in addcartList" :key="shop.id">
-          <input type="text" class="d-none" name="name" v-model="shop.name" />
-          <input type="text" class="d-none" name="price" v-model="shop.price" />
-          <input type="text" class="d-none" name="count" v-model="shop.count" />
           <input type="text" class="d-none" name="account" v-model="account" />
           <strong>商品名:</strong>{{ shop.name }} <strong>價格:</strong
           >{{ shop.price }} <strong>數量:</strong>{{ shop.count }}
           <i @click="removed" class="fa-solid fa-xmark"></i>
         </li>
+        <input type="text" name="name" v-model="pro" class="d-none" />
+        <input type="text" class="d-none" name="price" v-model="summ" />
+        <input type="text" class="d-none" name="count" v-model="pro2" />
       </ul>
       <button class="order-btn" @click="clearCart" type="button">清除</button>
       <button class="order-btn" @click="pay" type="submit">結帳</button>
@@ -61,6 +65,9 @@ export default {
   data() {
     return {
       cartList: [],
+      pro: [],
+      pro2:[],
+      summ:0
     };
   },
   computed: {
@@ -73,7 +80,12 @@ export default {
           copy.push(this.cartList[i]);
         }
       }
-      console.log(copy);
+      for (let a = 0; a < copy.length; a++) {
+        this.pro.push(copy[a].name);
+        this.pro2.push(copy[a].count);
+      }
+      this.pro = this.pro.join("、");
+      this.pro2 = this.pro2.join("、");
       return copy;
     },
     account() {
@@ -94,11 +106,13 @@ export default {
         $(".list").removeClass("d-none");
       });
       confirm(`總共是${sum}元!!!`);
-      localStorage.removeItem("ProductCount");
+      this.summ = sum;
+      console.log(this.summ)
+      // localStorage.removeItem("ProductCount");
       let data = new FormData();
-      data.append("name", shop.name);
-      data.append("price", this.price);
-      data.append("count", this.count);
+      data.append("name", this.pro);
+      data.append("price", this.summ);
+      data.append("count", this.pro2);
       data.append("account", this.account);
     },
     removed() {
