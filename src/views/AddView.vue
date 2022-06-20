@@ -232,6 +232,9 @@ select {
   margin-top: 5px;
   margin-bottom: 10px;
   font-size: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .form .btn {
@@ -241,8 +244,10 @@ select {
   background-color: rgb(153, 153, 220);
   width: 190px;
   padding: 10px 0;
+  width: 45%;
+  height: 50px;
+  line-height: 25px;
 }
-
 .form .btn + .btn {
   margin-left: 20px;
 }

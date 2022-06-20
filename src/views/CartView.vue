@@ -1,5 +1,5 @@
 <template>
- <link
+  <link
     rel="stylesheet"
     href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
     integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
@@ -8,15 +8,24 @@
   />
   <div>
     <h1>你的訂單</h1>
-    <ul class="order">
-      <li v-for="shop in addcartList" :key="shop.id">
-      <strong>商品名:</strong>{{shop.name}}      
-      <strong>價格:</strong>{{shop.price}}       
-      <strong>數量:</strong>{{shop.count}}  <i @click="removed" class="fa-solid fa-xmark"></i></li>
-    </ul>
+    <form action="http://localhost/connect_doll/doCart.php" method="post" target="hidefrime">
+      <ul class="order">
+        <li v-for="shop in addcartList" :key="shop.id">
+          <input type="text" class="d-none" name="name" v-model="shop.name" />
+          <input type="text" class="d-none" name="price" v-model="shop.price" />
+          <input type="text" class="d-none" name="count" v-model="shop.count" />
+          <input type="text" class="d-none" name="account" v-model="account" />
+          <strong>商品名:</strong>{{ shop.name }} <strong>價格:</strong
+          >{{ shop.price }} <strong>數量:</strong>{{ shop.count }}
+          <i @click="removed" class="fa-solid fa-xmark"></i>
+        </li>
+      </ul>
+      <button class="order-btn" @click="clearCart" type="button">清除</button>
+      <button class="order-btn" @click="pay" type="submit">結帳</button>
+    </form>
+    <iframe name="hidefrime" class="d-none"></iframe>
   </div>
-  <button class="order-btn" @click="clearCart">清除</button>
-  <button class="order-btn" @click="pay">結帳</button>
+
   <ol class="list d-none">
     <li>
       <i class="fa-solid fa-1"></i>
@@ -56,52 +65,45 @@ export default {
   },
   computed: {
     addcartList() {
-      // this.cartList = JSON.parse(localStorage.getItem('ProductCount'))
-      // console.log(this.cartList)
       if (!localStorage.getItem("ProductCount")) return; //如果localstorage沒有值就return
       this.cartList = JSON.parse(localStorage.getItem("ProductCount"));
-      // this.cartList.forEach(function (item) {
-      //   if (item.count > 0) {
-      //     return `
-      // 商品名:${item.name}
-      // 售價:${item.price}
-      // 數量:${item.count}`;
-      //   }
-      // });
-      // for (let i = 0; i < 9; i++) {
-      //   if (this.cartList[i].count > 0) {
-      //     return `
-      // 商品名:${this.cartList[i].name}
-      // 售價:${this.cartList[i].price}
-      // 數量:${this.cartList[i].count}`;
-      //   }
-      // }
       const copy = [];
       for (let i = 0; i < this.cartList.length; i++) {
         if (this.cartList[i].count > 0) {
           copy.push(this.cartList[i]);
         }
       }
-      console.log(copy)
+      console.log(copy);
       return copy;
+    },
+    account() {
+      if (!localStorage.getItem("user")) return; //如果localstorage沒有值就return
+      this.user = JSON.parse(localStorage.getItem("user"));
+      console.log(this.user.account);
+      return this.user.account;
     },
   },
   methods: {
     clearCart() {
-      this.cartList = localStorage.clear();
+      this.cartList = localStorage.removeItem("ProductCount");
     },
     pay() {
       let sum = 0;
       this.addcartList.forEach(function (shop) {
         sum += shop.price * shop.count;
-        $(".list").removeClass('d-none')
+        $(".list").removeClass("d-none");
       });
       confirm(`總共是${sum}元!!!`);
+      localStorage.removeItem("ProductCount");
+      let data = new FormData();
+      data.append("name", shop.name);
+      data.append("price", this.price);
+      data.append("count", this.count);
+      data.append("account", this.account);
     },
-    removed(){
-      this.addcartList.splice(1)
-      console.log(this.addcartList)
-    }
+    removed() {
+      localStorage.removeItem("ProductCount");
+    },
   },
 };
 </script>
@@ -169,16 +171,16 @@ a {
 .list li.active ~ li::before {
   background-color: #999;
 }
-.fa-xmark{
+.fa-xmark {
   padding-left: 10px;
 }
-.order{
+.order {
   padding: 30px;
 }
-.order strong{
+.order strong {
   padding-left: 50px;
 }
-.order-btn{
+.order-btn {
   border: 1px solid #aaa;
   border-radius: 30px;
   background-color: #eee;
